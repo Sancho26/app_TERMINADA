@@ -22,8 +22,6 @@ import javax.swing.JOptionPane;
 public class Compras extends javax.swing.JFrame {
 
     static public ResultSet r;
-    static public ResultSet r2;
-    static public ResultSet r3;
 
     static public Connection connection;
 
@@ -354,9 +352,6 @@ public class Compras extends javax.swing.JFrame {
             vProducto = producto.getText();
             vCantidad = cantidad.getText();
 
-            int numSocio = Integer.parseInt(vSocio); //PASO DE STRING A INT PARA PODER COMPARARLO DESPUÉS EN UN IF PARA CONTROLAR QUE EL SOCIO EXISTA EN LA BBDD
-            int numProducto = Integer.parseInt(vProducto);//PASO DE STRING A INT PARA PODER COMPARARLO DESPUÉS EN UN IF PARA CONTROLAR QUE EL PRODUCTO EXISTA EN LA BBDD
-
             if (vCantidad.equals("") || vProducto.equals("") || vSocio.equals("") || vProducto.equals("0") || vSocio.equals("0")) {
                 JOptionPane.showMessageDialog(null, "No se han introducido los datos correctamente", "Error", JOptionPane.ERROR_MESSAGE);
                 id.setText(null);
@@ -367,25 +362,25 @@ public class Compras extends javax.swing.JFrame {
                 precio.setText(null);
 
             } else {
-
+                int numSocio = Integer.parseInt(vSocio); //PASO DE STRING A INT PARA PODER COMPARARLO DESPUÉS EN UN IF PARA CONTROLAR QUE EL SOCIO EXISTA EN LA BBDD
+                int numProducto = Integer.parseInt(vProducto);//PASO DE STRING A INT PARA PODER COMPARARLO DESPUÉS EN UN IF PARA CONTROLAR QUE EL PRODUCTO EXISTA EN LA BBDD
                 String url = "jdbc:mysql://localhost:3306/tienda_videojuegos";
                 String user = "root";
                 String pass = "";
                 connection = DriverManager.getConnection(url, user, pass);
 
                 Statement s = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-                
+
                 String querySocio_Producto = "SELECT S.Identificador, P.Identificador FROM Socios S, Productos P";
                 r = s.executeQuery(querySocio_Producto);
 
                 //COMPRUEBO Y CONTROLO QUE EL SOCIO Y EL PRODUCTO EXISTAN
-                if (r.last()) { 
+                if (r.last()) {
 
                     String numSocio_str = r.getString("S.Identificador");
                     String numProducto_str = r.getString("P.Identificador");
                     int queryNumSocio = Integer.parseInt(numSocio_str);
                     int queryNumProducto = Integer.parseInt(numProducto_str);
-                    
 
                     //SI NO EXISTE ME SALTA UN JOPTIONPANE CON UN ERROR Y VUELVE A COLOCARTE EN EL PRIMER REGISTRO
                     if (numSocio > queryNumSocio || numProducto > queryNumProducto) {
@@ -412,7 +407,6 @@ public class Compras extends javax.swing.JFrame {
                         cantidad.setText(r.getString("Cantidad"));
                         precio.setText(r.getString("Precio_total"));
 
-                        
                     } else {
 
                         String query = "INSERT INTO Compras (Socio, Fecha, Producto, Cantidad, Precio_total) VALUES (" + vSocio + ", CURDATE(), " + vProducto + ", " + vCantidad + ", (SELECT (" + vCantidad + " * P.Precio_compra) FROM Productos P WHERE P.Identificador = " + vProducto + "))";

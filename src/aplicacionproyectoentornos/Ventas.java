@@ -299,8 +299,6 @@ public class Ventas extends javax.swing.JFrame {
             vProducto = producto.getText();
             vCantidad = cantidad.getText();
 
-            int numProducto = Integer.parseInt(vProducto);//PASO DE STRING A INT PARA PODER COMPARARLO DESPUÉS EN UN IF PARA CONTROLAR QUE EL PRODUCTO EXISTA EN LA BBDD
-
             if (vCantidad.equals("") || vProducto.equals("") || vProducto.equals("0")) {
                 JOptionPane.showMessageDialog(null, "No se han introducido los datos correctamente", "Error", JOptionPane.ERROR_MESSAGE);
                 id.setText(null);
@@ -310,6 +308,7 @@ public class Ventas extends javax.swing.JFrame {
                 precio.setText(null);
 
             } else {
+                int numProducto = Integer.parseInt(vProducto);//PASO DE STRING A INT PARA PODER COMPARARLO DESPUÉS EN UN IF PARA CONTROLAR QUE EL PRODUCTO EXISTA EN LA BBDD
                 String url = "jdbc:mysql://localhost:3306/tienda_videojuegos";
                 String user = "root";
                 String pass = "";
@@ -369,7 +368,7 @@ public class Ventas extends javax.swing.JFrame {
 
                         String query3 = "SELECT * FROM Ventas";
                         r = s.executeQuery(query3);
-                        
+
                         r.first();
                         id.setText(r.getString("Identificador"));
                         fecha.setText(r.getString("Fecha"));
